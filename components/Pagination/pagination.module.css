@@ -1,0 +1,12 @@
+.container {
+  width: 50%;
+  display: flex;
+}
+
+.paginationItem {
+  border: 1px solid black;
+  background-color: gray;
+  color: black;
+  width: 10px;
+  height: 10px;
+}
