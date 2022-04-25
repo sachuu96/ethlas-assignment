@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Router from "next/router";
 import axios from "axios";
 import Head from "next/head";
@@ -9,9 +10,17 @@ import Pagination from "../components/Pagination/pagination";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
+import { setDetails } from "../reducers/ship";
+
 export default function Index(props) {
+  const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(null);
+
+  useEffect(() => {
+    console.log("This is props", props);
+    dispatch(setDetails({ details: props.data }));
+  }, []);
 
   const onClickPage = (value) => {
     setPage(value);
@@ -117,18 +126,31 @@ Index.getInitialProps = async ({ query: { page = 1, search } }) => {
     response = await fetch(`https://swapi.dev/api/starships/?page=${page}`);
   }
   let data = await response.json();
-  let filmNames = [];
-  for (let i = 0; i < data.results.films?.length; i++) {
-    let filmId =
-      data.results.films[i].split("/")[
-        data.results.films[i].split("/").length - 2
-      ];
-    let filmResponse = await fetch(`https://swapi.dev/api/films/${filmId}`);
-    let filmData = await filmResponse.json();
-    filmNames.push({ name: filmData.title, filmId: filmId });
+  let formattedDataResults = [];
+
+  for (let i = 0; i < data.results.length; i++) {
+    let formattedFilms = [];
+    for (let j = 0; j < data.results[i].films.length; j++) {
+      let filmId =
+        data.results[i].films[j].split("/")[
+          data.results[i].films[j].split("/").length - 2
+        ];
+      let filmResponse = await fetch(`https://swapi.dev/api/films/${filmId}`);
+      let filmData = await filmResponse.json();
+      formattedFilms.push({ name: filmData.title, filmId: filmId });
+    }
+    formattedDataResults.push({
+      ...data.results[i],
+      id: data.results[i].url.split("/")[
+        data.results[i].url.split("/").length - 2
+      ],
+      rating: null,
+      films: [...formattedFilms],
+    });
   }
+
   return {
-    data: data,
+    data: { ...data, results: [...formattedDataResults] },
     totalPageCount: Math.ceil(data.count / 10),
   };
 };

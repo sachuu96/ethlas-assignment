@@ -1,8 +1,10 @@
 import React, { useState, Fragment } from "react";
 import PropTypes from "prop-types";
 import styles from "./ticket.module.css";
+import Button from "@mui/material/Button";
 
 import DetailsModal from "../Modal/Modal";
+import Rating from "../Rating/rating";
 
 export default function Ticket({
   name,
@@ -23,9 +25,13 @@ export default function Ticket({
     setOpen(false);
   };
 
+  const onStartClick = (value) => {
+    console.log("rating", value);
+  };
+
   return (
     <Fragment>
-      <div className={styles.mainWrapper} onClick={handleOpen}>
+      <div className={styles.mainWrapper}>
         <div className={styles.nameContainer}>
           <span>Name : {name}</span>
         </div>
@@ -38,9 +44,13 @@ export default function Ticket({
         <ul>
           {featuredFilms.length > 0 &&
             featuredFilms.map((film, key) => {
-              return <li key={key}>{film}</li>;
+              return <li key={key}>{film.name}</li>;
             })}
         </ul>
+        <div className={styles.ticketFooter}>
+          <Rating onStartClick={onStartClick} />
+          <Button onClick={handleOpen}>VIEW</Button>
+        </div>
       </div>
       <DetailsModal
         open={open}

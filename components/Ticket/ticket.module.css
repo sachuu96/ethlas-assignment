@@ -19,3 +19,8 @@
   font-weight: 600;
   font-size: 16px;
 }
+
+.ticketFooter {
+  display: flex;
+  justify-content: flex-start;
+}

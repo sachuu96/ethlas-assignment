@@ -52,10 +52,10 @@ export default function ShareModal({
             <ul>
               {featuredFilms.length > 0 &&
                 featuredFilms.map((film, key) => {
-                  let filmId = film.split("/")[film.split("/").length - 2];
+                  //let filmId = film.split("/")[film.split("/").length - 2];
                   return (
                     <li key={key}>
-                      <Link href={`/${filmId}`}>{film}</Link>
+                      <Link href={`/${film.filmId}`}>{film.name}</Link>
                     </li>
                   );
                 })}
