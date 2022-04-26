@@ -10,17 +10,31 @@ import Pagination from "../components/Pagination/pagination";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-import { setDetails } from "../reducers/ship";
+import { setRating } from "../reducers/ship";
 
 export default function Index(props) {
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState(null);
+  const [formattedShipData, setFormattedShipData] = useState(null);
 
   useEffect(() => {
-    console.log("This is props", props);
-    dispatch(setDetails({ details: props.data }));
-  }, []);
+    let storage = JSON.parse(localStorage.getItem("shipRatings"));
+    console.log("storage---", storage);
+    let formattedData = [];
+    props.data.results.map((propData) => {
+      let currentRate = 0;
+      if (storage && storage.length > 0) {
+        storage.map((storageRate) => {
+          if (storageRate.id === propData.id.toString()) {
+            currentRate = parseInt(storageRate.rate);
+          }
+        });
+      }
+      formattedData.push({ ...propData, rate: currentRate });
+    });
+    setFormattedShipData([...formattedData]);
+  }, [props]);
 
   const onClickPage = (value) => {
     setPage(value);
@@ -74,7 +88,7 @@ export default function Index(props) {
         </div>
       </div>
 
-      <ShipList ships={props.data.results} />
+      <ShipList ships={formattedShipData} />
       <div className={styles.paginationWrapper}>
         {props.totalPageCount > 0 && (
           <Pagination
@@ -87,34 +101,6 @@ export default function Index(props) {
     </div>
   );
 }
-
-/*export async function getStaticProps() {
-  let response = await fetch("https://swapi.dev/api/starships/");
-  const data = await response.json();
-
-  return {
-    props: {
-      data: data,
-      totalPageCount: Math.ceil(data.count / 10),
-    },
-    revalidate: 10,
-  };
-}*/
-
-/*export async function getServerSideProps(context) {
-  const req = context.req;
-  console.log("req-----------------", req.params);
-
-  let response = await fetch("https://swapi.dev/api/starships/");
-  const data = await response.json();
-
-  return {
-    props: {
-      data: data,
-      totalPageCount: Math.ceil(data.count / 10),
-    },
-  };
-}*/
 
 Index.getInitialProps = async ({ query: { page = 1, search } }) => {
   let response;

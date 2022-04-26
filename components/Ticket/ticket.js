@@ -1,21 +1,29 @@
-import React, { useState, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import styles from "./ticket.module.css";
 import Button from "@mui/material/Button";
+import { Rating } from "react-simple-star-rating";
 
 import DetailsModal from "../Modal/Modal";
-import Rating from "../Rating/rating";
+import { updateRating, getCurrentShipRating } from "../../reducers/ship";
 
 export default function Ticket({
   name,
   cost,
   featuredFilms,
-  rating,
   length,
   max_atmosphering_speed,
   crew,
+  id,
+  rate,
 }) {
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(rate);
+
+  useEffect(() => {
+    setValue(rate);
+  }, []);
 
   const handleOpen = () => {
     setOpen(true);
@@ -26,7 +34,31 @@ export default function Ticket({
   };
 
   const onStartClick = (value) => {
-    console.log("rating", value);
+    let shipRatings = JSON.parse(localStorage.getItem("shipRatings"));
+
+    if (shipRatings && shipRatings.length > 0) {
+      let updatedShipRatings = [];
+      let currentRate = shipRatings.filter((item) => id.toString() === item.id);
+      if (currentRate.length > 0) {
+        let formattedRatings = shipRatings.map((item) => {
+          if (item.id === id.toString()) {
+            return { id: item.id, rate: value };
+          } else return item;
+        });
+        updatedShipRatings = [...formattedRatings];
+      } else {
+        updatedShipRatings = [...shipRatings];
+        updatedShipRatings.push({ id: id, rate: value });
+      }
+      console.log("updatedShipRatings", updatedShipRatings);
+      localStorage.setItem("shipRatings", JSON.stringify(updatedShipRatings));
+    } else {
+      localStorage.setItem(
+        "shipRatings",
+        JSON.stringify([{ id: id, rate: value }])
+      );
+    }
+    setValue(value);
   };
 
   return (
@@ -48,7 +80,8 @@ export default function Ticket({
             })}
         </ul>
         <div className={styles.ticketFooter}>
-          <Rating onStartClick={onStartClick} />
+          <Rating onClick={onStartClick} ratingValue={value} />
+
           <Button onClick={handleOpen}>VIEW</Button>
         </div>
       </div>
@@ -58,7 +91,6 @@ export default function Ticket({
         name={name}
         cost={cost}
         featuredFilms={featuredFilms}
-        rating={rating}
         length={length}
         max_atmosphering_speed={max_atmosphering_speed}
         crew={crew}
@@ -75,6 +107,7 @@ Ticket.propTypes = {
   length: PropTypes.string,
   max_atmosphering_speed: PropTypes.string,
   crew: PropTypes.string,
+  id: PropTypes.string,
 };
 
 Ticket.defaultProps = {
@@ -85,4 +118,5 @@ Ticket.defaultProps = {
   length: "150",
   max_atmosphering_speed: "950",
   crew: "30-165",
+  id: null,
 };

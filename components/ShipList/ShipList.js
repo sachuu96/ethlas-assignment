@@ -24,6 +24,8 @@ export default function ShipList({ ships }) {
               length={ship.length}
               max_atmosphering_speed={ship.max_atmosphering_speed}
               crew={ship.crew}
+              id={ship.id}
+              rate={ship.rate}
             />
           );
         })}
