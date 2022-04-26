@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import styles from "./ticket.module.css";
 import Button from "@mui/material/Button";
 import { Rating } from "react-simple-star-rating";
+import axios from "axios";
 
 import DetailsModal from "../Modal/Modal";
 import { updateRating, getCurrentShipRating } from "../../reducers/ship";
@@ -20,8 +21,27 @@ export default function Ticket({
 }) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(rate);
+  const [isLoading, setIsLoading] = useState(false);
+  const [films, setFilms] = useState([]);
 
   useEffect(() => {
+    setIsLoading(true);
+    let formattedFilms = [];
+    for (let i = 0; i < featuredFilms.length; i++) {
+      axios
+        .get(`https://swapi.dev/api/films/${featuredFilms[i].filmId}`)
+        .then((res) => {
+          formattedFilms.push({
+            name: res.data.title,
+            filmId: featuredFilms[i].filmId,
+          });
+          //console.log("res===========", res);
+        })
+        .catch((err) => {
+          console.log("Error : ", err);
+        });
+    }
+    setFilms([...formattedFilms]);
     setValue(rate);
   }, []);
 
@@ -73,12 +93,16 @@ export default function Ticket({
         <div className={styles.nameContainer}>
           <span>featured Films : </span>
         </div>
-        <ul>
-          {featuredFilms.length > 0 &&
-            featuredFilms.map((film, key) => {
-              return <li key={key}>{film.name}</li>;
-            })}
-        </ul>
+        {isLoading ? (
+          <span>Loading</span>
+        ) : (
+          <ul>
+            {films.length > 0 &&
+              films.map((film, key) => {
+                return <li key={key}>{film.name}</li>;
+              })}
+          </ul>
+        )}
         <div className={styles.ticketFooter}>
           <Rating onClick={onStartClick} ratingValue={value} />
 
@@ -90,7 +114,7 @@ export default function Ticket({
         handleClose={handleClose}
         name={name}
         cost={cost}
-        featuredFilms={featuredFilms}
+        featuredFilms={films}
         length={length}
         max_atmosphering_speed={max_atmosphering_speed}
         crew={crew}

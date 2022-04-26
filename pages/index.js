@@ -121,9 +121,10 @@ Index.getInitialProps = async ({ query: { page = 1, search } }) => {
         data.results[i].films[j].split("/")[
           data.results[i].films[j].split("/").length - 2
         ];
-      let filmResponse = await fetch(`https://swapi.dev/api/films/${filmId}`);
-      let filmData = await filmResponse.json();
-      formattedFilms.push({ name: filmData.title, filmId: filmId });
+      /*let filmResponse = await fetch(`https://swapi.dev/api/films/${filmId}`);
+      let filmData = await filmResponse.json();*/
+      //formattedFilms.push({ name: filmData.title, filmId: filmId });
+      formattedFilms.push({ name: data.results[i].films[j], filmId: filmId });
     }
     formattedDataResults.push({
       ...data.results[i],
