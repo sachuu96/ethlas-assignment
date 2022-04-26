@@ -16,14 +16,22 @@ export default function Ticket({
   max_atmosphering_speed,
   crew,
   id,
-  rate,
 }) {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(rate);
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
-    setValue(rate);
-  }, []);
+    let storage = JSON.parse(localStorage.getItem("shipRatings"));
+    let currentRating = 0;
+    if (storage) {
+      storage.map((item) => {
+        if (item.id === id.toString()) {
+          currentRating = parseInt(item.rate);
+        }
+      });
+    }
+    setValue(currentRating);
+  }, [id]);
 
   const handleOpen = () => {
     setOpen(true);

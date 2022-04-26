@@ -1,10 +1,14 @@
 1. download the project
 2. install the dependencies
 
-`npm install`
+   `npm install`
 
-3. start the project in dev mode
+3. Build the project
 
-`yarn dev `
+   `yarn build `
 
-4. navigate to <a>localhost:3000</a>
+4. Start the project
+
+   `yarn start`
+
+5. Visit <a>localhost:3000</a>

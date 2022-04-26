@@ -35,8 +35,8 @@ export default function Film({
 
 Film.propTypes = {
   title: PropTypes.string,
-  episodeId: PropTypes.string,
-  openingCrawl: PropTypes.array,
+  episodeId: PropTypes.number,
+  openingCrawl: PropTypes.string,
   director: PropTypes.string,
   producer: PropTypes.string,
   releasedDate: PropTypes.string,
@@ -44,7 +44,7 @@ Film.propTypes = {
 
 Film.defaultProps = {
   title: "title",
-  episodeId: "episodeId",
+  episodeId: 1,
   openingCrawl: "openingCrawl",
   director: "director",
   producer: "producer",
